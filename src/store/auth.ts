@@ -1,8 +1,23 @@
 import { StateCreator } from "zustand";
 
+interface AuthUser {
+  id: number;
+  name: string;
+  email: string;
+}
+
 export interface AuthSlice {
-  user: { id: number; name: string; email: string } | null;
+  user: AuthUser | null;
   accessToken: string | null;
+  onAuthSuccess: ({
+    user,
+    accessToken,
+  }: {
+    user: AuthUser;
+    accessToken: string;
+  }) => void;
+  onProfileUpdate: (user: AuthUser) => void;
+  onLogout: () => void;
 }
 
 export const createAuthSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (
@@ -10,4 +25,16 @@ export const createAuthSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (
 ) => ({
   user: null,
   accessToken: null,
+  onAuthSuccess: (payload) => {
+    set(() => ({ ...payload }));
+  },
+  onProfileUpdate: (payload) => {
+    set(() => ({ user: payload }));
+  },
+  onLogout: () => {
+    set(() => ({
+      user: null,
+      accessToken: null,
+    }));
+  },
 });

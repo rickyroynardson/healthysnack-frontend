@@ -1,6 +1,3 @@
-import { useForm } from "react-hook-form";
-import { LoginFormSchema, loginFormSchema } from "../forms/login";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -9,30 +6,60 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import {
+  EditProfileFormSchema,
+  editProfileFormSchema,
+} from "../forms/edit-profile";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useGetProfile } from "..";
 import { Input } from "@/components/ui/input";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 
-interface LoginFormProps {
+interface EditProfileFormProps {
   isPending: boolean;
-  onSubmit: (values: LoginFormSchema) => void;
+  onSubmit: (values: EditProfileFormSchema) => void;
 }
 
-export const LoginForm: React.FC<LoginFormProps> = ({
+export const EditProfileForm: React.FC<EditProfileFormProps> = ({
   isPending,
   onSubmit,
 }) => {
-  const form = useForm<LoginFormSchema>({
+  const { data: profile } = useGetProfile();
+
+  const form = useForm<EditProfileFormSchema>({
     defaultValues: {
+      name: "",
       email: "",
-      password: "",
     },
-    resolver: zodResolver(loginFormSchema),
+    resolver: zodResolver(editProfileFormSchema),
     reValidateMode: "onChange",
   });
+
+  useEffect(() => {
+    if (profile?.data) {
+      form.setValue("name", profile.data.data.name);
+      form.setValue("email", profile.data.data.email);
+    }
+  }, [form, profile]);
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit((values) => onSubmit(values))}>
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="email"
@@ -40,31 +67,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="Enter your email" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  placeholder="Enter your password"
-                  {...field}
-                />
+                <Input type="email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         <Button type="submit" disabled={isPending}>
-          Login
+          Update Profile
         </Button>
       </form>
     </Form>
