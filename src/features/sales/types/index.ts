@@ -2,6 +2,7 @@ import { Product } from "@/features/products/types";
 
 export interface Sale {
   id: number;
+  total: number;
   createdAt: Date;
   updatedAt: Date;
   ProductSale: {

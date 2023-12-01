@@ -39,7 +39,8 @@ export const ProductCategoryList: React.FC = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead colSpan={2}>Name</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead colSpan={2}>Product Count</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

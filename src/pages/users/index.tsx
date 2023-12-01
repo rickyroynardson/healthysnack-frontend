@@ -2,41 +2,36 @@ import { AuthenticatedRoute } from "@/components/guards/AuthenticatedRoute";
 import { FullPageLayout } from "@/components/layouts/FullPageLayout";
 import { HeadMetaData } from "@/components/meta/HeadMetaData";
 import { Button } from "@/components/ui/button";
-import {
-  CreateProductForm,
-  ManageProduct,
-  ProductList,
-} from "@/features/products/components";
+import { CreateUserForm, UserList } from "@/features/users/components";
 import { NextPage } from "next";
 import { useState } from "react";
 
-const ProductsPage: NextPage = () => {
+const UsersPage: NextPage = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   return (
     <AuthenticatedRoute>
-      <HeadMetaData title="Product" />
+      <HeadMetaData title="User" />
       <FullPageLayout>
-        <CreateProductForm
+        <CreateUserForm
           isOpen={isCreateDialogOpen}
           onClose={() => setIsCreateDialogOpen(false)}
         />
         <div className="container space-y-4 py-4 pb-24 lg:pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-lg font-bold">Product</p>
-              <p className="text-foreground/60">Showing all products</p>
+              <p className="text-lg font-bold">User</p>
+              <p className="text-foreground/60">Showing all users registered</p>
             </div>
             <Button size="sm" onClick={() => setIsCreateDialogOpen(true)}>
-              New product
+              New user
             </Button>
           </div>
-          <ProductList />
-          <ManageProduct />
+          <UserList />
         </div>
       </FullPageLayout>
     </AuthenticatedRoute>
   );
 };
 
-export default ProductsPage;
+export default UsersPage;

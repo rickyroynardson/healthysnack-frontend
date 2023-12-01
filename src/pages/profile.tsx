@@ -2,7 +2,10 @@ import { SubHeader } from "@/components/elements/SubHeader";
 import { AuthenticatedRoute } from "@/components/guards/AuthenticatedRoute";
 import { FullPageLayout } from "@/components/layouts/FullPageLayout";
 import { HeadMetaData } from "@/components/meta/HeadMetaData";
-import { EditProfileForm } from "@/features/profile/components";
+import {
+  EditPasswordForm,
+  EditProfileForm,
+} from "@/features/profile/components";
 import { EditProfileFormSchema } from "@/features/profile/forms/edit-profile";
 import { useEditProfile } from "@/features/profile/useEditProfile";
 import { useStore } from "@/store";
@@ -33,13 +36,24 @@ const ProfilePage: NextPage = () => {
       <HeadMetaData title="Profile" />
       <FullPageLayout>
         <SubHeader url="/" title="Profile" />
-        <div className="container py-4 pb-24 lg:pb-4">
-          <p className="text-lg font-bold">Account Information</p>
-          <p className="text-foreground/60">View and change profile data</p>
-          <EditProfileForm
-            isPending={editProfileIsPending}
-            onSubmit={handleEditProfileSubmit}
-          />
+        <div className="container space-y-6 py-4 pb-24 lg:pb-4">
+          <div className="space-y-4">
+            <div>
+              <p className="text-lg font-bold">Account Information</p>
+              <p className="text-foreground/60">View and change profile data</p>
+            </div>
+            <EditProfileForm
+              isPending={editProfileIsPending}
+              onSubmit={handleEditProfileSubmit}
+            />
+          </div>
+          <div className="space-y-4">
+            <div>
+              <p className="text-lg font-bold">Account Security</p>
+              <p className="text-foreground/60">Update account password</p>
+            </div>
+            <EditPasswordForm />
+          </div>
         </div>
       </FullPageLayout>
     </AuthenticatedRoute>

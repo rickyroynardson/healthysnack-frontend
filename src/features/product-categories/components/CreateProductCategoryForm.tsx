@@ -86,6 +86,7 @@ export const CreateProductCategoryForm: React.FC<
             onSubmit={form.handleSubmit((values) =>
               handleCreateProductCategorySubmit(values)
             )}
+            className="space-y-4"
           >
             <FormField
               control={form.control}

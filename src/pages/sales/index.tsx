@@ -2,6 +2,14 @@ import { AuthenticatedRoute } from "@/components/guards/AuthenticatedRoute";
 import { FullPageLayout } from "@/components/layouts/FullPageLayout";
 import { HeadMetaData } from "@/components/meta/HeadMetaData";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { ProductList } from "@/features/sales/components";
 import {
@@ -20,7 +28,9 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 const SalesPage: NextPage = () => {
-  const [payTotal, setPayTotal] = useState("0");
+  const [isConfirmCheckoutOpen, setIsConfirmCheckoutOpen] = useState(false);
+  const [totalPay, setTotalPay] = useState(0);
+
   const { mutateAsync: createSaleMutate } = useCreateSale();
 
   const form = useForm<CreateSaleFormSchema>({
@@ -55,7 +65,8 @@ const SalesPage: NextPage = () => {
       const response = await createSaleMutate(values);
       toast.success(response.data.message);
       form.reset();
-      setPayTotal("0");
+      setTotalPay(0);
+      setIsConfirmCheckoutOpen(false);
       queryClient.invalidateQueries({
         queryKey: ["products"],
       });
@@ -67,6 +78,9 @@ const SalesPage: NextPage = () => {
     }
   };
 
+  const totalItem = fieldArray.fields.reduce((total, product) => {
+    return total + product.quantity;
+  }, 0);
   const totalPrice = fieldArray.fields.reduce((total, product) => {
     return total + product.price * product.quantity;
   }, 0);
@@ -135,28 +149,77 @@ const SalesPage: NextPage = () => {
                   </div>
                 )
               )}
-              <div>
-                <div className="flex items-center justify-between">
-                  <p className="font-semibold">Total price:</p>
-                  <p>{toRupiah(totalPrice)}</p>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <p className="font-semibold">Total item:</p>
+                    <p>{totalItem}</p>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <p className="font-semibold">Total price:</p>
+                    <p>{toRupiah(totalPrice)}</p>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <p className="font-semibold">Pay:</p>
-                  <Input
-                    type="number"
-                    className="w-fit"
-                    value={payTotal}
-                    onChange={(e) => setPayTotal(e.target.value)}
-                  />
+                <div className="flex flex-col gap-2">
+                  <Button variant="outline" onClick={() => fieldArray.remove()}>
+                    Clear cart
+                  </Button>
+                  <Button
+                    disabled={fieldArray.fields.length <= 0}
+                    onClick={() => setIsConfirmCheckoutOpen(true)}
+                  >
+                    Checkout
+                  </Button>
+                  <Dialog
+                    open={isConfirmCheckoutOpen}
+                    onOpenChange={() => setIsConfirmCheckoutOpen(false)}
+                  >
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Confirm checkout</DialogTitle>
+                        <DialogDescription>
+                          Check the cart list. Click confirm to checkout this
+                          transaction.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <p className="font-semibold">Total item:</p>
+                          <p>{totalItem}</p>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <p className="font-semibold">Total price:</p>
+                          <p>{toRupiah(totalPrice)}</p>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <p className="font-semibold">Pay:</p>
+                          <Input
+                            type="number"
+                            className="w-fit"
+                            onChange={(e) =>
+                              setTotalPay(parseInt(e.target.value))
+                            }
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <p className="font-semibold">Exchange:</p>
+                          <p>
+                            {totalPay > 0 ? toRupiah(totalPay - totalPrice) : 0}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          className="w-full sm:w-auto"
+                          onClick={() => handleCheckout(form.getValues())}
+                          disabled={totalPay <= 0 || totalPay < totalPrice}
+                        >
+                          Confirm
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
-                <Button
-                  onClick={form.handleSubmit((values) =>
-                    handleCheckout(values)
-                  )}
-                  className="w-full"
-                >
-                  Checkout
-                </Button>
               </div>
             </div>
           </div>

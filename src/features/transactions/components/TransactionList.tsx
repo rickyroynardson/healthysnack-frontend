@@ -19,6 +19,7 @@ export const TransactionList: React.FC = () => {
         <TableHeader>
           <TableRow>
             <TableHead>Date</TableHead>
+            <TableHead>Total</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

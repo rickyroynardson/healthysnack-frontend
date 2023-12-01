@@ -11,36 +11,28 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Pencil, Trash } from "lucide-react";
-import { EditProductCategoryForm } from ".";
-import { useState } from "react";
+import { Trash } from "lucide-react";
 
-interface ProductCategoryListItemProps {
+interface UserListItemProps {
   id: number;
   name: string;
-  _count: {
-    Product: number;
-  };
+  email: string;
+  createdAt: Date;
+  updatedAt: Date;
   onDelete: (id: number) => void;
 }
 
-export const ProductCategoryListItem: React.FC<
-  ProductCategoryListItemProps
-> = ({ id, name, _count, onDelete }) => {
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-
+export const UserListItem: React.FC<UserListItemProps> = ({
+  id,
+  name,
+  email,
+  onDelete,
+}) => {
   return (
     <TableRow>
       <TableCell>{name}</TableCell>
-      <TableCell>{_count.Product}</TableCell>
-      <TableCell className="text-right space-x-2">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => setIsEditDialogOpen(true)}
-        >
-          <Pencil className="w-4 aspect-square" />
-        </Button>
+      <TableCell>{email}</TableCell>
+      <TableCell className="text-right">
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="outline" size="icon">
@@ -51,8 +43,7 @@ export const ProductCategoryListItem: React.FC<
             <AlertDialogHeader>
               <AlertDialogTitle>Are you sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                All product with this category will be deleted. Data that has
-                been deleted cannot be accessed again.
+                Data that has been deleted cannot be accessed again.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -63,14 +54,6 @@ export const ProductCategoryListItem: React.FC<
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-      </TableCell>
-      <TableCell hidden>
-        <EditProductCategoryForm
-          id={id}
-          name={name}
-          isOpen={isEditDialogOpen}
-          onClose={() => setIsEditDialogOpen(false)}
-        />
       </TableCell>
     </TableRow>
   );

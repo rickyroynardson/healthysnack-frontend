@@ -18,7 +18,7 @@ const ProductCategoriesPage: NextPage = () => {
           isOpen={isCreateDialogOpen}
           handleClose={() => setIsCreateDialogOpen(false)}
         />
-        <div className="container py-4 pb-24 lg:pb-4">
+        <div className="container space-y-4 py-4 pb-24 lg:pb-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-lg font-bold">Product Categories</p>

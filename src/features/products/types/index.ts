@@ -10,3 +10,14 @@ export interface Product {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface BestSellingProduct {
+  id: number;
+  name: string;
+  price: number;
+  stock: number;
+  productCategoryId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  totalQuantitySold: number;
+}

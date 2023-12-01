@@ -6,6 +6,7 @@ import {
   Package,
   Receipt,
   ShoppingBasket,
+  Users,
   X,
 } from "lucide-react";
 import { Button } from "../ui/button";
@@ -34,6 +35,11 @@ const settingItems = [
     Icon: Receipt,
   },
   {
+    url: "/users",
+    label: "User",
+    Icon: Users,
+  },
+  {
     url: "/products",
     label: "Product",
     Icon: Package,
@@ -56,19 +62,23 @@ export const Sidebar: React.FC = () => {
           isOpen ? "translate-y-0" : "-translate-y-[200%]"
         }`}
       >
-        <div>
-          <p className="text-lg font-bold text-foreground/70">Menu</p>
-          <ul className="space-y-2">
-            {menuItems.map((menu, index) => (
-              <SidebarItem key={index} {...menu} />
-            ))}
-          </ul>
-          <p className="text-lg font-bold text-foreground/70">Setting</p>
-          <ul className="space-y-2">
-            {settingItems.map((setting, index) => (
-              <SidebarItem key={index} {...setting} />
-            ))}
-          </ul>
+        <div className="space-y-4">
+          <div>
+            <p className="text-lg font-bold text-foreground/70">Menu</p>
+            <ul className="space-y-2">
+              {menuItems.map((menu, index) => (
+                <SidebarItem key={index} {...menu} />
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="text-lg font-bold text-foreground/70">Setting</p>
+            <ul className="space-y-2">
+              {settingItems.map((setting, index) => (
+                <SidebarItem key={index} {...setting} />
+              ))}
+            </ul>
+          </div>
         </div>
         <div className="space-y-4">
           <div className="flex items-center justify-between">

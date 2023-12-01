@@ -7,9 +7,9 @@ import {
 } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import {
-  CreateProductFormSchema,
-  createProductFormSchema,
-} from "../forms/create-product";
+  CreateUserFormSchema,
+  createUserFormSchema,
+} from "../forms/create-user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -21,50 +21,41 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useGetProductCategories } from "@/features/product-categories";
-import { ProductCategory } from "@/features/product-categories/types";
-import { useCreateProduct } from "../useCreateProduct";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
+import { useCreateUser } from "../useCreateUser";
 import { queryClient } from "@/lib/react-query";
 
-interface CreateProductFormProps {
+interface CreateUserFormProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const CreateProductForm: React.FC<CreateProductFormProps> = ({
+export const CreateUserForm: React.FC<CreateUserFormProps> = ({
   isOpen,
   onClose,
 }) => {
-  const { data: productCategories } = useGetProductCategories();
-  const { mutateAsync: createProductMutate } = useCreateProduct();
+  const { mutateAsync: createUserMutate } = useCreateUser();
 
-  const form = useForm<CreateProductFormSchema>({
+  const form = useForm<CreateUserFormSchema>({
     defaultValues: {
       name: "",
-      price: "0",
-      productCategoryId: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
     },
-    resolver: zodResolver(createProductFormSchema),
+    resolver: zodResolver(createUserFormSchema),
     reValidateMode: "onChange",
   });
 
-  const handleCreateProductSubmit = async (values: CreateProductFormSchema) => {
+  const handleCreateUserSubmit = async (values: CreateUserFormSchema) => {
     try {
-      const response = await createProductMutate(values);
+      const response = await createUserMutate(values);
       toast.success(response.data.message);
       form.reset();
       onClose();
       queryClient.invalidateQueries({
-        queryKey: ["products"],
+        queryKey: ["users"],
       });
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -78,7 +69,7 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = ({
     <Dialog open={isOpen} onOpenChange={() => onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>New product</DialogTitle>
+          <DialogTitle>New user</DialogTitle>
           <DialogDescription>
             Fill the field to create new product. Click save when done.
           </DialogDescription>
@@ -86,7 +77,7 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = ({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit((values) =>
-              handleCreateProductSubmit(values)
+              handleCreateUserSubmit(values)
             )}
             className="space-y-4"
           >
@@ -98,7 +89,7 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = ({
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input placeholder="Enter user name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -106,12 +97,16 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = ({
               />
               <FormField
                 control={form.control}
-                name="price"
+                name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Price</FormLabel>
+                    <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input
+                        type="email"
+                        placeholder="Enter user email"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -119,32 +114,34 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = ({
               />
               <FormField
                 control={form.control}
-                name="productCategoryId"
+                name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select product category" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {productCategories?.data.data.map(
-                          (productCategory: ProductCategory) => (
-                            <SelectItem
-                              key={productCategory.id}
-                              value={productCategory.id.toString()}
-                            >
-                              {productCategory.name}
-                            </SelectItem>
-                          )
-                        )}
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Enter user password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Confirm user password"
+                        {...field}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
