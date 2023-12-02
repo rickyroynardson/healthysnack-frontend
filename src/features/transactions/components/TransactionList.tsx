@@ -19,7 +19,7 @@ export const TransactionList: React.FC = () => {
         <TableHeader>
           <TableRow>
             <TableHead>Date</TableHead>
-            <TableHead>Total</TableHead>
+            <TableHead colSpan={2}>Total</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
