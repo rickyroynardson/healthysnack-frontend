@@ -15,6 +15,7 @@ import {
 
 interface TransactionListItemProps {
   id: number;
+  invoiceNumber: string;
   total: number;
   ProductSale: ProductSale[];
   createdAt: Date;
@@ -22,13 +23,18 @@ interface TransactionListItemProps {
 
 export const TransactionListItem: React.FC<TransactionListItemProps> = ({
   id,
+  invoiceNumber,
   total,
   ProductSale,
   createdAt,
 }) => {
   return (
     <TableRow>
+      <TableCell>{invoiceNumber}</TableCell>
       <TableCell>{moment(createdAt).format("lll")}</TableCell>
+      <TableCell>
+        {ProductSale.reduce((total, product) => total + product.quantity, 0)}
+      </TableCell>
       <TableCell>{toRupiah(total)}</TableCell>
       <TableCell>
         <Dialog>
@@ -43,6 +49,7 @@ export const TransactionListItem: React.FC<TransactionListItemProps> = ({
             </DialogHeader>
             <div className="space-y-4">
               <div>
+                <p className="text-muted-foreground">{invoiceNumber}</p>
                 <p className="text-muted-foreground">
                   {moment(createdAt).format("LLL")}
                 </p>
