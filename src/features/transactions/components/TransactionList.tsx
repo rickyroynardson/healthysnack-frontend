@@ -18,8 +18,10 @@ export const TransactionList: React.FC = () => {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>Invoice Number</TableHead>
             <TableHead>Date</TableHead>
-            <TableHead>Total</TableHead>
+            <TableHead>Total Item</TableHead>
+            <TableHead colSpan={2}>Total Price</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

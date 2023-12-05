@@ -3,6 +3,7 @@ import { HeadMetaData } from "@/components/meta/HeadMetaData";
 import { AuthenticatedRoute } from "@/components/guards/AuthenticatedRoute";
 import { FullPageLayout } from "@/components/layouts/FullPageLayout";
 import { BestSellingProductList } from "@/features/products/components";
+import { TransactionProfitCard } from "@/features/transactions/components/TransactionProfitCard";
 
 const DashboardPage: NextPage = () => {
   return (
@@ -18,8 +19,9 @@ const DashboardPage: NextPage = () => {
               </p>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
             <BestSellingProductList />
+            <TransactionProfitCard />
           </div>
         </div>
       </FullPageLayout>
