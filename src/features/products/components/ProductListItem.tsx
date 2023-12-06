@@ -16,6 +16,7 @@ import { toRupiah } from "@/utils/format";
 import { Pencil, Trash } from "lucide-react";
 import { useState } from "react";
 import { EditProductForm } from "./EditProductForm";
+import { ProductMaterial } from "../types";
 
 interface ProductListItemProps {
   id: number;
@@ -24,6 +25,8 @@ interface ProductListItemProps {
   stock: number;
   productCategoryId: number;
   productCategory: ProductCategory;
+  ProductMaterial: ProductMaterial[];
+  capital: number;
   createdAt: Date;
   updatedAt: Date;
   onDelete: (id: number) => void;
@@ -36,6 +39,8 @@ export const ProductListItem: React.FC<ProductListItemProps> = ({
   stock,
   productCategoryId,
   productCategory,
+  ProductMaterial,
+  capital,
   createdAt,
   updatedAt,
   onDelete,
@@ -46,6 +51,7 @@ export const ProductListItem: React.FC<ProductListItemProps> = ({
     <TableRow>
       <TableCell>{name}</TableCell>
       <TableCell>{toRupiah(price)}</TableCell>
+      <TableCell>{toRupiah(capital)}</TableCell>
       <TableCell>{stock}</TableCell>
       <TableCell>{productCategory.name}</TableCell>
       <TableCell className="text-right space-x-2">
@@ -85,6 +91,16 @@ export const ProductListItem: React.FC<ProductListItemProps> = ({
           price={price.toString()}
           stock={stock.toString()}
           productCategoryId={productCategoryId.toString()}
+          materials={
+            ProductMaterial
+              ? ProductMaterial.map((material) => ({
+                  ...material,
+                  materialId: material.id,
+                  price: material.price.toString(),
+                  quantity: material.quantity.toString(),
+                }))
+              : []
+          }
           isOpen={isEditDialogOpen}
           onClose={() => setIsEditDialogOpen(false)}
         />

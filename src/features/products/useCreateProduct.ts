@@ -9,6 +9,12 @@ export const useCreateProduct = () => {
         name: body.name,
         price: parseInt(body.price),
         productCategoryId: parseInt(body.productCategoryId),
+        materials: body.materials.map((material) => ({
+          name: material.name,
+          quantity: parseInt(material.quantity),
+          unit: material.unit,
+          price: parseInt(material.price),
+        })),
       });
     },
   });

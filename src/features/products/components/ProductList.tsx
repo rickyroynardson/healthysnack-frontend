@@ -40,6 +40,7 @@ export const ProductList: React.FC = () => {
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Price</TableHead>
+            <TableHead>Capital</TableHead>
             <TableHead>Stock</TableHead>
             <TableHead colSpan={2}>Category</TableHead>
           </TableRow>

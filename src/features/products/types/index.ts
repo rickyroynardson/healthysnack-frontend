@@ -7,8 +7,18 @@ export interface Product {
   stock: number;
   productCategoryId: number;
   productCategory: ProductCategory;
+  ProductMaterial: ProductMaterial[];
+  capital: number;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface ProductMaterial {
+  id: number;
+  name: string;
+  quantity: number;
+  unit: string;
+  price: number;
 }
 
 export interface BestSellingProduct {
