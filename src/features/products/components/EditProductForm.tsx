@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import {
   EditProductFormSchema,
   editProductFormSchema,
@@ -34,6 +34,7 @@ import { useEditProduct } from "../useEditProduct";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { queryClient } from "@/lib/react-query";
+import { X } from "lucide-react";
 
 interface EditProductFormProps {
   id: number;
@@ -41,6 +42,13 @@ interface EditProductFormProps {
   price: string;
   stock: string;
   productCategoryId: string;
+  materials: {
+    materialId?: number;
+    name: string;
+    quantity: string;
+    unit: string;
+    price: string;
+  }[];
   isOpen: boolean;
   onClose: () => void;
 }
@@ -51,6 +59,7 @@ export const EditProductForm: React.FC<EditProductFormProps> = ({
   price,
   stock,
   productCategoryId,
+  materials,
   isOpen,
   onClose,
 }) => {
@@ -63,10 +72,25 @@ export const EditProductForm: React.FC<EditProductFormProps> = ({
       price,
       stock,
       productCategoryId,
+      materials,
     },
     resolver: zodResolver(editProductFormSchema),
     reValidateMode: "onChange",
   });
+  const fieldArray = useFieldArray({
+    control: form.control,
+    name: "materials",
+  });
+
+  const handleAddMaterialInput = () => {
+    fieldArray.append({
+      materialId: undefined,
+      name: "",
+      quantity: "",
+      unit: "",
+      price: "",
+    });
+  };
 
   const handleEditProductSubmit = async (values: EditProductFormSchema) => {
     try {
@@ -173,6 +197,96 @@ export const EditProductForm: React.FC<EditProductFormProps> = ({
                   </FormItem>
                 )}
               />
+            </div>
+            <div className="space-y-2">
+              <p className="font-semibold">Materials</p>
+              <div className="space-y-2">
+                {fieldArray.fields.map(
+                  (
+                    value: {
+                      id: string;
+                      name: string;
+                      quantity: string;
+                      unit: string;
+                      price: string;
+                    },
+                    index
+                  ) => (
+                    <div key={value.id} className="flex items-center gap-1">
+                      <FormField
+                        control={form.control}
+                        name={`materials.${index}.name`}
+                        render={({ field }) => (
+                          <FormItem className="grow">
+                            <FormControl>
+                              <Input placeholder="Name" {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`materials.${index}.quantity`}
+                        render={({ field }) => (
+                          <FormItem className="grow">
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="Quantity"
+                                {...field}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`materials.${index}.unit`}
+                        render={({ field }) => (
+                          <FormItem className="grow">
+                            <FormControl>
+                              <Input placeholder="Unit" {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`materials.${index}.price`}
+                        render={({ field }) => (
+                          <FormItem className="grow">
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="Price"
+                                {...field}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => fieldArray.remove(index)}
+                        className="grow shrink-0"
+                      >
+                        <X className="w-4 aspect-square" />
+                      </Button>
+                    </div>
+                  )
+                )}
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="w-full"
+                onClick={handleAddMaterialInput}
+              >
+                Add material
+              </Button>
             </div>
             <div className="flex items-center justify-end">
               <Button type="submit" className="w-full sm:w-auto">
