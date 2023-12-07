@@ -6,7 +6,7 @@ export const BestSellingProductList: React.FC = () => {
   const { data: bestSellingProducts } = useGetBestSellingProducts();
 
   return (
-    <div className="border rounded-lg p-4 space-y-4">
+    <div className="border rounded-lg p-4 space-y-4 h-fit">
       <p className="text-center text-lg font-semibold">Best selling product</p>
       <div className="space-y-5 pb-4">
         {bestSellingProducts?.data.data.length ? (
