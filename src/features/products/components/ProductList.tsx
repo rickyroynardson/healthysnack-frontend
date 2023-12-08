@@ -41,6 +41,7 @@ export const ProductList: React.FC = () => {
             <TableHead>Name</TableHead>
             <TableHead>Price</TableHead>
             <TableHead>Capital</TableHead>
+            <TableHead>Materials</TableHead>
             <TableHead>Stock</TableHead>
             <TableHead colSpan={2}>Category</TableHead>
           </TableRow>

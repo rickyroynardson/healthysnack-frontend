@@ -71,7 +71,17 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = ({
     try {
       const response = await createProductMutate(values);
       toast.success(response.data.message);
-      form.reset();
+      form.reset({
+        name: "",
+        price: "0",
+        productCategoryId: "",
+        materials: fieldArray.fields.map(() => ({
+          name: "",
+          quantity: "",
+          unit: "",
+          price: "",
+        })),
+      });
       onClose();
       queryClient.invalidateQueries({
         queryKey: ["products"],

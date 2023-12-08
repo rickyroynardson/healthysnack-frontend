@@ -52,6 +52,16 @@ export const ProductListItem: React.FC<ProductListItemProps> = ({
       <TableCell>{name}</TableCell>
       <TableCell>{toRupiah(price)}</TableCell>
       <TableCell>{toRupiah(capital)}</TableCell>
+      <TableCell>
+        <ul className="text-xs">
+          {ProductMaterial.map((material) => (
+            <li key={material.id}>
+              {material.name} ({material.quantity} {material.unit}) -{" "}
+              {toRupiah(material.price)}
+            </li>
+          ))}
+        </ul>
+      </TableCell>
       <TableCell>{stock}</TableCell>
       <TableCell>{productCategory.name}</TableCell>
       <TableCell className="text-right space-x-2">

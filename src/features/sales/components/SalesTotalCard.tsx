@@ -13,24 +13,26 @@ export const SalesTotalCard: React.FC = () => {
           <div>
             <p className="text-muted-foreground">Today</p>
             <div className="flex items-center gap-2">
-              <CircleDollarSign size={28} />
+              <CircleDollarSign size={28} className="text-green-400" />
               <p className="text-2xl">{toRupiah(salesTotal.data.data.total)}</p>
-              <p
-                className={`${
-                  salesTotal.data.data.percentageChange > 0
-                    ? "text-green-600"
-                    : "text-red-600"
-                }`}
-              >
-                {salesTotal.data.data.percentageChange > 0 && "+"}
-                {salesTotal.data.data.percentageChange}%
-              </p>
+              {salesTotal.data.data.percentageChange && (
+                <p
+                  className={`${
+                    salesTotal.data.data.percentageChange > 0
+                      ? "text-green-600"
+                      : "text-red-600"
+                  }`}
+                >
+                  {salesTotal.data.data.percentageChange > 0 && "+"}
+                  {salesTotal.data.data.percentageChange}%
+                </p>
+              )}
             </div>
           </div>
           <div>
             <p className="text-muted-foreground text-sm">Yesterday</p>
             <div className="flex items-center gap-2">
-              <CircleDollarSign size={20} />
+              <CircleDollarSign size={20} className="text-green-400" />
               <p>{toRupiah(salesTotal.data.data.yesterdayTotal)}</p>
             </div>
           </div>
