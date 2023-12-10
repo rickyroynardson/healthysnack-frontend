@@ -4,3 +4,4 @@ export * from "./useEditProduct";
 export * from "./useDeleteProduct";
 export * from "./useResetProductsStock";
 export * from "./useGetBestSellingProducts";
+export * from "./useGetProductLogs";

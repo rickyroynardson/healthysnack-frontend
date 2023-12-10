@@ -86,6 +86,9 @@ export const CreateProductForm: React.FC<CreateProductFormProps> = ({
       queryClient.invalidateQueries({
         queryKey: ["products"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["product-logs"],
+      });
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data.message);

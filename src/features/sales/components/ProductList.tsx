@@ -3,6 +3,7 @@ import { ProductListItem } from ".";
 import { Product } from "@/features/products/types";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { useGetAllProducts } from "@/features/products/useGetAllProducts";
 
 interface ProductListProps {
   onProductClick: (productId: number, name: string, price: number) => void;
@@ -11,7 +12,7 @@ interface ProductListProps {
 export const ProductList: React.FC<ProductListProps> = ({ onProductClick }) => {
   const [searchProduct, setSearchProduct] = useState("");
 
-  const { data: products } = useGetProducts();
+  const { data: products } = useGetAllProducts();
 
   return (
     <div className="w-full h-fit max-h-[40vh] lg:max-h-[95vh] overflow-y-auto space-y-3 lg:space-y-4">
