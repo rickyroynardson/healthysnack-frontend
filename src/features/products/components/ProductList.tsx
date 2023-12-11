@@ -17,16 +17,23 @@ import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 export const ProductList: React.FC = () => {
   let ellipsisDisplayed = false;
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [search, setSearch] = useState("");
 
+  const searchName = searchParams.get("name") || "";
   const currentPage = Number(searchParams.get("page")) || 1;
   const limitPerPage = 10;
 
-  const { data: products } = useGetProducts({ page: currentPage });
+  const { data: products } = useGetProducts({
+    page: currentPage,
+    name: searchName,
+  });
   const { mutateAsync: deleteProductMutate } = useDeleteProduct();
 
   const totalData = products?.data.data.meta.total || 0;
@@ -35,7 +42,16 @@ export const ProductList: React.FC = () => {
   const handleChangePage = (page: number) => {
     router.push({
       href: router.asPath,
-      query: { page },
+      query: { ...router.query, page },
+    });
+  };
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if ("code" in e && e.code !== "Enter") return;
+
+    router.push({
+      href: router.asPath,
+      query: { name: search, page: 1 },
     });
   };
 
@@ -95,6 +111,14 @@ export const ProductList: React.FC = () => {
 
   return (
     <div className="space-y-4">
+      <div>
+        <Input
+          placeholder="Search product..."
+          defaultValue={searchName}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={handleSearch}
+        />
+      </div>
       <div className="border rounded-lg">
         <Table>
           <TableHeader>
