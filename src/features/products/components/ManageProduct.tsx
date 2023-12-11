@@ -10,13 +10,24 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { useResetProductsStock } from "..";
+import { useGetProductLogs, useResetProductsStock } from "..";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 import { queryClient } from "@/lib/react-query";
 import { ManageProductForm } from ".";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ProductLog } from "../types";
+import moment from "moment";
 
 export const ManageProduct: React.FC = () => {
+  const { data: productLogs } = useGetProductLogs();
   const { mutateAsync: resetProductsStockMutate } = useResetProductsStock();
 
   const handleResetProductsStock = async () => {
@@ -25,6 +36,9 @@ export const ManageProduct: React.FC = () => {
       toast.success(response.data.message);
       queryClient.invalidateQueries({
         queryKey: ["products"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["product-logs"],
       });
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -41,27 +55,56 @@ export const ManageProduct: React.FC = () => {
           <p className="text-lg font-bold">Manage Product</p>
           <p className="text-foreground/60">Increase or manage stock</p>
         </div>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="destructive" size="sm">
-              Reset stock
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                By resetting the stock, all products stock will be reset to 0.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleResetProductsStock}>
-                Yes
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <div className="flex items-center gap-2">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="secondary" size="sm">
+                Product Log
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-h-[80vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Product Log</DialogTitle>
+                <DialogDescription>
+                  Showing product stock changes, sorted by latest.
+                </DialogDescription>
+              </DialogHeader>
+              <div>
+                {productLogs?.data.data.map((productLog: ProductLog) => (
+                  <div key={productLog.id} className="py-1 border-b">
+                    <p className="text-sm text-gray-800">
+                      {productLog.description}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {moment(productLog.createdAt).format("lll")}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </DialogContent>
+          </Dialog>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" size="sm">
+                Reset stock
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  By resetting the stock, all products stock will be reset to 0.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleResetProductsStock}>
+                  Yes
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
       <ManageProductForm />
     </div>

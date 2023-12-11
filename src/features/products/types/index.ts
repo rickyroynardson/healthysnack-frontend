@@ -31,3 +31,10 @@ export interface BestSellingProduct {
   updatedAt: Date;
   totalQuantitySold: number;
 }
+
+export interface ProductLog {
+  id: number;
+  description: string;
+  type: "INCREASE" | "DECREASE" | "UPDATE" | "RESET";
+  createdAt: Date;
+}
