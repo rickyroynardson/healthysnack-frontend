@@ -4,6 +4,7 @@ import {
   LogOut,
   Menu,
   Package,
+  PackageOpen,
   Receipt,
   ShoppingBasket,
   Users,
@@ -48,6 +49,11 @@ const settingItems = [
     url: "/product-categories",
     label: "Product Category",
     Icon: Package,
+  },
+  {
+    url: "/inventories",
+    label: "Inventory",
+    Icon: PackageOpen,
   },
 ];
 
