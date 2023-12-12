@@ -6,6 +6,7 @@ import {
   Package,
   PackageOpen,
   Receipt,
+  ShoppingBag,
   ShoppingBasket,
   Users,
   X,
@@ -26,6 +27,11 @@ const menuItems = [
     url: "/sales",
     label: "Sale",
     Icon: ShoppingBasket,
+  },
+  {
+    url: "/purchases",
+    label: "Purchase",
+    Icon: ShoppingBag,
   },
 ];
 
