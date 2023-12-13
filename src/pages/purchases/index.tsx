@@ -2,6 +2,7 @@ import { AuthenticatedRoute } from "@/components/guards/AuthenticatedRoute";
 import { FullPageLayout } from "@/components/layouts/FullPageLayout";
 import { HeadMetaData } from "@/components/meta/HeadMetaData";
 import { Button } from "@/components/ui/button";
+import { PurchaseList } from "@/features/purchases/components";
 import { NextPage } from "next";
 import Link from "next/link";
 
@@ -20,6 +21,7 @@ const PurchasesPage: NextPage = () => {
               <Button size="sm">New purchase</Button>
             </Link>
           </div>
+          <PurchaseList />
         </div>
       </FullPageLayout>
     </AuthenticatedRoute>
