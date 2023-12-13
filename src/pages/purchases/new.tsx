@@ -24,13 +24,44 @@ import {
 } from "@/features/purchases/forms/create-purchase";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarIcon, Save } from "lucide-react";
+import { CalendarIcon, Save, X } from "lucide-react";
 import { NextPage } from "next";
 import { useFieldArray, useForm } from "react-hook-form";
 import { format } from "date-fns";
-import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useGetAllInventories } from "@/features/inventories";
+import { Inventory } from "@/features/inventories/types";
+import { useState } from "react";
+import { toRupiah } from "@/utils/format";
+import { useCreatePurchase } from "@/features/purchases/useCreatePurchase";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
+import { redirect } from "next/navigation";
+import { useRouter } from "next/router";
 
 const NewPurchasePage: NextPage = () => {
+  const [isAddItemDialogOpen, setIsAddItemDialogOpen] = useState(false);
+  const [searchItem, setSearchItem] = useState("");
+  const { data: inventories } = useGetAllInventories();
+  const { mutateAsync: createPurchaseMutate } = useCreatePurchase();
+  const router = useRouter();
+
   const form = useForm<CreatePurchaseFormSchema>({
     defaultValues: {
       invoiceNumber: "",
@@ -47,6 +78,44 @@ const NewPurchasePage: NextPage = () => {
     name: "inventories",
   });
 
+  const handleAddItem = ({
+    inventoryId,
+    inventoryDetail,
+  }: {
+    inventoryId: number;
+    inventoryDetail: { name: string; stock: number; unit: string };
+  }) => {
+    fieldArray.append({
+      inventoryId,
+      inventoryDetail,
+      quantity: "",
+      price: "",
+    });
+    setSearchItem("");
+    setIsAddItemDialogOpen(false);
+  };
+
+  const handleCreatePurchase = async (values: CreatePurchaseFormSchema) => {
+    try {
+      const response = await createPurchaseMutate(values);
+      toast.success(response.data.message);
+      form.reset();
+      router.push("/purchases");
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message);
+        return;
+      }
+    }
+  };
+
+  const totalPrice = fieldArray.fields.reduce((total, _, index) => {
+    const quantity = form.watch(`inventories.${index}.quantity`);
+    const price = form.watch(`inventories.${index}.price`);
+    const subTotal = parseInt(quantity) * parseInt(price) || 0;
+    return total + subTotal;
+  }, 0);
+
   return (
     <AuthenticatedRoute>
       <HeadMetaData title="New Purchase" />
@@ -55,10 +124,15 @@ const NewPurchasePage: NextPage = () => {
         <div className="container py-4 pb-24 lg:pb-4">
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit((values) => console.log(values))}
+              onSubmit={form.handleSubmit((values) =>
+                handleCreatePurchase(values)
+              )}
               className="space-y-4"
             >
-              <div className="flex justify-end">
+              <div className="flex items-center justify-between">
+                <p className="text-muted-foreground">
+                  Fill the form to create a new purchase data
+                </p>
                 <Button type="submit" className="flex items-center gap-2">
                   <Save className="w-4 aspect-square" />
                   <span>Save</span>
@@ -147,7 +221,55 @@ const NewPurchasePage: NextPage = () => {
                 />
               </div>
               <div>
-                <Button type="button">Add item</Button>
+                <Dialog
+                  open={isAddItemDialogOpen}
+                  onOpenChange={setIsAddItemDialogOpen}
+                >
+                  <DialogTrigger asChild>
+                    <Button type="button">Add item</Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Add item</DialogTitle>
+                      <DialogDescription>
+                        Select item to add in purchase list
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-2">
+                      <Input
+                        placeholder="Search item..."
+                        value={searchItem}
+                        onChange={(e) => setSearchItem(e.target.value)}
+                      />
+                      <div className="flex gap-2">
+                        {inventories?.data.data
+                          .filter((inventory: Inventory) =>
+                            inventory.name
+                              .toLowerCase()
+                              .includes(searchItem.toLowerCase())
+                          )
+                          .map((inventory: Inventory) => (
+                            <Button
+                              key={inventory.id}
+                              variant="outline"
+                              onClick={() =>
+                                handleAddItem({
+                                  inventoryId: inventory.id,
+                                  inventoryDetail: {
+                                    name: inventory.name,
+                                    stock: inventory.stock,
+                                    unit: inventory.unit,
+                                  },
+                                })
+                              }
+                            >
+                              {inventory.name}
+                            </Button>
+                          ))}
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
               <div>
                 <Table>
@@ -155,8 +277,87 @@ const NewPurchasePage: NextPage = () => {
                     <TableRow>
                       <TableHead>Item Detail</TableHead>
                       <TableHead>Quantity</TableHead>
+                      <TableHead>Price</TableHead>
+                      <TableHead colSpan={2}>Sub total</TableHead>
                     </TableRow>
                   </TableHeader>
+                  <TableFooter>
+                    <TableRow>
+                      <TableCell colSpan={3}>Total</TableCell>
+                      <TableCell colSpan={2}>{toRupiah(totalPrice)}</TableCell>
+                    </TableRow>
+                  </TableFooter>
+                  <TableBody>
+                    {fieldArray.fields.map((field, index) => {
+                      const quantity = form.watch(
+                        `inventories.${index}.quantity`
+                      );
+                      const price = form.watch(`inventories.${index}.price`);
+                      const subTotal =
+                        parseInt(quantity) * parseInt(price) || 0;
+
+                      return (
+                        <TableRow key={field.id}>
+                          <TableCell>
+                            <ul>
+                              <li>{field.inventoryDetail.name}</li>
+                              <li className="text-sm text-muted-foreground">
+                                ({field.inventoryDetail.stock}{" "}
+                                {field.inventoryDetail.unit})
+                              </li>
+                            </ul>
+                          </TableCell>
+                          <TableCell>
+                            <FormField
+                              control={form.control}
+                              name={`inventories.${index}.quantity`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      placeholder="Qty"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <FormField
+                              control={form.control}
+                              name={`inventories.${index}.price`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      placeholder="Price"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </TableCell>
+                          <TableCell>{toRupiah(subTotal)}</TableCell>
+                          <TableCell>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="icon"
+                              onClick={() => fieldArray.remove(index)}
+                            >
+                              <X className="w-4 aspect-square" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
                 </Table>
               </div>
             </form>
