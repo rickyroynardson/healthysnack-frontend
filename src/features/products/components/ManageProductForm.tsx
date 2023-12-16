@@ -19,7 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useGetProducts } from "..";
 import { Product } from "../types";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus } from "lucide-react";
@@ -28,9 +27,10 @@ import { useManageProductStock } from "../useManageProductStock";
 import { toast } from "sonner";
 import { queryClient } from "@/lib/react-query";
 import { AxiosError } from "axios";
+import { useGetAllProducts } from "../useGetAllProducts";
 
 export const ManageProductForm: React.FC = () => {
-  const { data: products } = useGetProducts();
+  const { data: products } = useGetAllProducts();
   const { mutateAsync: manageProductStockMutate } = useManageProductStock();
 
   const form = useForm<ManageProductStockFormSchema>({
@@ -79,7 +79,7 @@ export const ManageProductForm: React.FC = () => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {products?.data.data.data.map((product: Product) => (
+                  {products?.data.data.map((product: Product) => (
                     <SelectItem key={product.id} value={product.id.toString()}>
                       {product.name}
                     </SelectItem>

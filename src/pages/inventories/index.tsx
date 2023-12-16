@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   CreateInventoryForm,
   InventoryList,
+  ManageInventory,
 } from "@/features/inventories/components";
 import { NextPage } from "next";
 import { useState } from "react";
@@ -31,6 +32,7 @@ const InventoriesPage: NextPage = () => {
             </Button>
           </div>
           <InventoryList />
+          <ManageInventory />
         </div>
       </FullPageLayout>
     </AuthenticatedRoute>
