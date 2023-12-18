@@ -1,17 +1,10 @@
 import { useForm } from "react-hook-form";
 import {
-  ManageProductStockFormSchema,
-  manageProductStockFormSchema,
-} from "../forms/manage-product-stock";
+  ManageInventoryStockFormSchema,
+  manageInventoryStockFormSchema,
+} from "../forms/manage-inventory-stock";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import {
   Select,
   SelectContent,
@@ -19,42 +12,43 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Product } from "../types";
+import { useGetAllInventories } from "..";
+import { Inventory } from "../types";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { useManageProductStock } from "../useManageProductStock";
-import { toast } from "sonner";
-import { queryClient } from "@/lib/react-query";
 import { AxiosError } from "axios";
-import { useGetAllProducts } from "../useGetAllProducts";
+import { toast } from "sonner";
+import { useManageInventoryStock } from "../useManageInventoryStock";
+import { queryClient } from "@/lib/react-query";
 
-export const ManageProductForm: React.FC = () => {
-  const { data: products } = useGetAllProducts();
-  const { mutateAsync: manageProductStockMutate } = useManageProductStock();
+export const ManageInventoryForm: React.FC = () => {
+  const { data: inventories } = useGetAllInventories();
+  const { mutateAsync: manageInventoryStockMutate } = useManageInventoryStock();
 
-  const form = useForm<ManageProductStockFormSchema>({
+  const form = useForm<ManageInventoryStockFormSchema>({
     defaultValues: {
       id: "",
       quantity: "0",
+      memo: "",
     },
-    resolver: zodResolver(manageProductStockFormSchema),
+    resolver: zodResolver(manageInventoryStockFormSchema),
     reValidateMode: "onChange",
   });
 
-  const handleManageProductStockSubmit = async (
-    values: ManageProductStockFormSchema,
+  const handleManageInventoryStockSubmit = async (
+    values: ManageInventoryStockFormSchema,
     action: "increase" | "decrease"
   ) => {
     try {
-      const response = await manageProductStockMutate({ ...values, action });
+      const response = await manageInventoryStockMutate({ ...values, action });
       toast.success(response.data.message);
       form.reset();
       queryClient.invalidateQueries({
-        queryKey: ["products"],
+        queryKey: ["inventories"],
       });
       queryClient.invalidateQueries({
-        queryKey: ["product-logs"],
+        queryKey: ["inventory-logs"],
       });
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -75,13 +69,16 @@ export const ManageProductForm: React.FC = () => {
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select product" />
+                    <SelectValue placeholder="Select inventory" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {products?.data.data.map((product: Product) => (
-                    <SelectItem key={product.id} value={product.id.toString()}>
-                      {product.name}
+                  {inventories?.data.data.map((inventory: Inventory) => (
+                    <SelectItem
+                      key={inventory.id}
+                      value={inventory.id.toString()}
+                    >
+                      {inventory.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -100,13 +97,24 @@ export const ManageProductForm: React.FC = () => {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="memo"
+          render={({ field }) => (
+            <FormItem className="grow">
+              <FormControl>
+                <Input placeholder="Memo" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
         <div className="flex items-center gap-1">
           <Button
             type="button"
             variant="outline"
             size="icon"
             onClick={form.handleSubmit((values) =>
-              handleManageProductStockSubmit(values, "decrease")
+              handleManageInventoryStockSubmit(values, "decrease")
             )}
           >
             <Minus className="w-4 aspect-square" />
@@ -116,7 +124,7 @@ export const ManageProductForm: React.FC = () => {
             variant="outline"
             size="icon"
             onClick={form.handleSubmit((values) =>
-              handleManageProductStockSubmit(values, "increase")
+              handleManageInventoryStockSubmit(values, "increase")
             )}
           >
             <Plus className="w-4 aspect-square" />

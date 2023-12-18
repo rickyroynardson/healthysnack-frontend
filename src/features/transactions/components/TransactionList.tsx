@@ -21,6 +21,7 @@ export const TransactionList: React.FC = () => {
             <TableHead>Invoice Number</TableHead>
             <TableHead>Date</TableHead>
             <TableHead>Total Item</TableHead>
+            <TableHead className="hidden print:table-cell">Item List</TableHead>
             <TableHead colSpan={2}>Total Price</TableHead>
           </TableRow>
         </TableHeader>

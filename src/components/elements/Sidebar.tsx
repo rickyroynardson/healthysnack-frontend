@@ -4,7 +4,9 @@ import {
   LogOut,
   Menu,
   Package,
+  PackageOpen,
   Receipt,
+  ShoppingBag,
   ShoppingBasket,
   Users,
   X,
@@ -25,6 +27,11 @@ const menuItems = [
     url: "/sales",
     label: "Sale",
     Icon: ShoppingBasket,
+  },
+  {
+    url: "/purchases",
+    label: "Purchase",
+    Icon: ShoppingBag,
   },
 ];
 
@@ -49,6 +56,11 @@ const settingItems = [
     label: "Product Category",
     Icon: Package,
   },
+  {
+    url: "/inventories",
+    label: "Inventory",
+    Icon: PackageOpen,
+  },
 ];
 
 export const Sidebar: React.FC = () => {
@@ -60,7 +72,7 @@ export const Sidebar: React.FC = () => {
       <div
         className={`h-screen fixed lg:sticky lg:top-0 inset-0 z-20 lg:z-10 p-4 lg:px-0 lg:pr-4 lg:pl-[2rem] flex flex-col justify-between lg:w-1/5 lg:border-r bg-secondary lg:bg-transparent transition-transform lg:translate-y-0 ${
           isOpen ? "translate-y-0" : "-translate-y-[200%]"
-        }`}
+        } print:hidden`}
       >
         <div className="space-y-4">
           <div>
@@ -108,7 +120,7 @@ export const Sidebar: React.FC = () => {
           </Button>
         </div>
       </div>
-      <div className="fixed lg:hidden bottom-0 inset-x-0 z-10 p-4 bg-white border-t supports-[backdrop-filter]:bg-white/60 supports-[backdrop-filter]:backdrop-blur-md">
+      <div className="fixed lg:hidden print:hidden bottom-0 inset-x-0 z-10 p-4 bg-white border-t supports-[backdrop-filter]:bg-white/60 supports-[backdrop-filter]:backdrop-blur-md">
         <Button
           onClick={() => setIsOpen(true)}
           className="w-full flex items-center justify-start gap-2"

@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/dialog";
 import { ProductLog } from "../types";
 import moment from "moment";
+import { Badge } from "@/components/ui/badge";
 
 export const ManageProduct: React.FC = () => {
   const { data: productLogs } = useGetProductLogs();
@@ -72,12 +73,17 @@ export const ManageProduct: React.FC = () => {
               <div>
                 {productLogs?.data.data.map((productLog: ProductLog) => (
                   <div key={productLog.id} className="py-1 border-b">
-                    <p className="text-sm text-gray-800">
-                      {productLog.description}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {moment(productLog.createdAt).format("lll")}
-                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="grow">
+                        <p className="text-sm text-gray-800">
+                          {productLog.description}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {moment(productLog.createdAt).format("lll")}
+                        </p>
+                      </div>
+                      <Badge variant="outline">{productLog.type}</Badge>
+                    </div>
                   </div>
                 ))}
               </div>

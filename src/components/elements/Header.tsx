@@ -14,7 +14,7 @@ export const Header: React.FC = () => {
   const { user, onLogout } = useStore();
 
   return (
-    <div className="py-4 border-b">
+    <div className="py-4 border-b print:hidden">
       <div className="container flex items-center justify-between">
         <Link href="/" className="text-xl font-bold">
           Healthysnack
