@@ -61,6 +61,9 @@ export const InventoryList = () => {
       queryClient.invalidateQueries({
         queryKey: ["inventories"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["all-inventories"],
+      });
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data.message);

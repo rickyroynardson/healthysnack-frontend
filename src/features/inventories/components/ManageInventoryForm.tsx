@@ -17,9 +17,14 @@ import { Inventory } from "../types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus } from "lucide-react";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
+import { useManageInventoryStock } from "../useManageInventoryStock";
+import { queryClient } from "@/lib/react-query";
 
 export const ManageInventoryForm: React.FC = () => {
   const { data: inventories } = useGetAllInventories();
+  const { mutateAsync: manageInventoryStockMutate } = useManageInventoryStock();
 
   const form = useForm<ManageInventoryStockFormSchema>({
     defaultValues: {
@@ -30,6 +35,28 @@ export const ManageInventoryForm: React.FC = () => {
     resolver: zodResolver(manageInventoryStockFormSchema),
     reValidateMode: "onChange",
   });
+
+  const handleManageInventoryStockSubmit = async (
+    values: ManageInventoryStockFormSchema,
+    action: "increase" | "decrease"
+  ) => {
+    try {
+      const response = await manageInventoryStockMutate({ ...values, action });
+      toast.success(response.data.message);
+      form.reset();
+      queryClient.invalidateQueries({
+        queryKey: ["inventories"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["inventory-logs"],
+      });
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message);
+        return;
+      }
+    }
+  };
 
   return (
     <Form {...form}>
@@ -82,10 +109,24 @@ export const ManageInventoryForm: React.FC = () => {
           )}
         />
         <div className="flex items-center gap-1">
-          <Button type="button" variant="outline" size="icon">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={form.handleSubmit((values) =>
+              handleManageInventoryStockSubmit(values, "decrease")
+            )}
+          >
             <Minus className="w-4 aspect-square" />
           </Button>
-          <Button type="button" variant="outline" size="icon">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={form.handleSubmit((values) =>
+              handleManageInventoryStockSubmit(values, "increase")
+            )}
+          >
             <Plus className="w-4 aspect-square" />
           </Button>
         </div>

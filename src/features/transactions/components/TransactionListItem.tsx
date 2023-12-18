@@ -7,7 +7,6 @@ import { ProductSale } from "@/features/sales/types";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -35,8 +34,17 @@ export const TransactionListItem: React.FC<TransactionListItemProps> = ({
       <TableCell>
         {ProductSale.reduce((total, product) => total + product.quantity, 0)}
       </TableCell>
+      <TableCell className="hidden print:table-cell">
+        <ul>
+          {ProductSale.map((product, index) => (
+            <li key={index} className="text-xs">
+              {product.quantity}x {product.product.name}
+            </li>
+          ))}
+        </ul>
+      </TableCell>
       <TableCell>{toRupiah(total)}</TableCell>
-      <TableCell>
+      <TableCell className="print:hidden">
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="outline" size="icon">
