@@ -67,7 +67,7 @@ const SalesPage: NextPage = () => {
       setTotalPay(0);
       setIsConfirmCheckoutOpen(false);
       queryClient.invalidateQueries({
-        queryKey: ["products"],
+        queryKey: ["all-products"],
       });
     } catch (error) {
       if (error instanceof AxiosError) {

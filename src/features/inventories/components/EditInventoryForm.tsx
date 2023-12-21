@@ -63,6 +63,9 @@ export const EditInventoryForm: React.FC<EditInventoryFormProps> = ({
       queryClient.invalidateQueries({
         queryKey: ["inventories"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["inventory-logs"],
+      });
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data.message);
