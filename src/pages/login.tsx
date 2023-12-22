@@ -28,8 +28,11 @@ const LoginPage: NextPage = () => {
   return (
     <GuestRoute>
       <HeadMetaData title="Login" />
-      <main>
-        <LoginForm isPending={loginIsPending} onSubmit={handleLoginSubmit} />
+      <main className="w-screen h-screen flex items-center justify-center">
+        <div className="w-full max-w-sm border p-6 space-y-2">
+          <h1 className="text-lg font-bold text-primary">Login</h1>
+          <LoginForm isPending={loginIsPending} onSubmit={handleLoginSubmit} />
+        </div>
       </main>
     </GuestRoute>
   );
